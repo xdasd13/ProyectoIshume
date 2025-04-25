@@ -68,9 +68,9 @@ INSERT INTO fotos (nombre, ruta_archivo, descripcion, id_evento) VALUES
 ('Niña sonriendo', '/imagenes/nina.jpg', 'Retrato de una niña con sonrisa natural', 2),
 ('Flor silvestre', '/imagenes/flor.jpg', 'Macro fotografía de flora local', 3),
 ('Callejón antiguo', '/imagenes/callejon.jpg', 'Callejón de un pueblo medieval', 4),
-('Manifestación pacífica', '/imagenes/manifestacion.jpg', 'Grupo de personas en manifestación', 5);
+('Manifestación pacífica', '/imagenes/manifestacion.jpg', 'Grupo de personas en manifestación', 5),
 
--- Inserción de comentarios
+--   Inserción de comentarios
 INSERT INTO comentarios (comentario, id_usuario, id_foto) VALUES
 ('Increíble captura del amanecer, me encanta la luz natural', 4, 1),
 ('Los tonos de este retrato son perfectos', 3, 2),
