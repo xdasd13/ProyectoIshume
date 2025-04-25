@@ -203,7 +203,7 @@
        "Invitaciones digitales o físicas",
        "Recuerdos personalizados",
      ],
-     image: "",
+     image: "./../servicios/img/babyshower.jpg",
    },
  };
 
