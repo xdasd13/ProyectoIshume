@@ -1,0 +1,64 @@
+<%- include('../partials/header') %>
+
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-md-8 offset-md-2">
+      <div class="card">
+        <div class="card-header bg-warning">
+          <h4 class="mb-0">Editar Servicio</h4>
+        </div>
+        <div class="card-body">
+          <form action="/servicios/editar/<%= servicio.idServicio %>" method="POST" enctype="multipart/form-data">
+            <div class="mb-3">
+              <label for="nomServicio" class="form-label">Nombre del Servicio</label>
+              <input type="text" class="form-control" id="nomServicio" name="nomServicio" value="<%= servicio.nomServicio %>" required>
+            </div>
+            
+            <div class="mb-3">
+              <label for="descripcion" class="form-label">Descripción</label>
+              <textarea class="form-control" id="descripcion" name="descripcion" rows="3" required><%= servicio.descripcion %></textarea>
+            </div>
+            
+            <div class="mb-3">
+              <label for="precio" class="form-label">Precio (S/)</label>
+              <input type="number" class="form-control" id="precio" name="precio" step="0.01" min="0" value="<%= servicio.precio %>" required>
+            </div>
+            
+            <div class="mb-3">
+              <label for="idCategoria" class="form-label">Categoría</label>
+              <select class="form-select" id="idCategoria" name="idCategoria" required>
+                <% categorias.forEach(categoria => { %>
+                  <option value="<%= categoria.idCategoria %>" <%= servicio.idCategoria === categoria.idCategoria ? 'selected' : '' %>>
+                    <%= categoria.nomCategoria %>
+                  </option>
+                <% }) %>
+              </select>
+            </div>
+            
+            <div class="mb-3">
+              <label for="imgReferencia" class="form-label">Imagen Actual</label>
+              <div class="text-center mb-3">
+                <img src="<%= servicio.imgReferencia %>" alt="<%= servicio.nomServicio %>" class="img-fluid img-thumbnail" style="max-height: 200px;">
+              </div>
+              <label for="imgReferencia" class="form-label">Actualizar Imagen</label>
+              <input type="file" class="form-control" id="imgReferencia" name="imgReferencia" accept="image/*">
+              <div class="form-text">Dejar en blanco para mantener la imagen actual. Formatos permitidos: JPG, PNG, GIF, WebP. Tamaño máximo: 5MB</div>
+            </div>
+            
+            <div class="mb-3 form-check">
+              <input type="checkbox" class="form-check-input" id="disponible" name="disponible" <%= servicio.disponible === 'activo' ? 'checked' : '' %>>
+              <label class="form-check-label" for="disponible">Disponible</label>
+            </div>
+            
+            <div class="d-flex justify-content-between">
+              <a href="/servicios" class="btn btn-secondary">Cancelar</a>
+              <button type="submit" class="btn btn-warning">Actualizar Servicio</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

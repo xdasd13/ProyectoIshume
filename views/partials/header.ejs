@@ -3,45 +3,279 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tienda de Juegos</title>
+  <title><%= typeof titulo !== 'undefined' ? titulo + ' - ' : '' %>Galería Fotográfica</title>
   <!-- Bootstrap CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-  <!-- FontAwesome para los iconos -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-  <!--css personalizado-->
-  <link rel="stylesheet" href="/public/css/estilos.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <!-- Animate.css -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+  <!-- AOS - Animate on scroll -->
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="/css/styles.css">
+  <style>
+    :root {
+      --primary-color: #3498db;
+      --secondary-color: #2ecc71;
+      --accent-color: #f39c12;
+      --dark-color: #2c3e50;
+      --light-color: #ecf0f1;
+      --danger-color: #e74c3c;
+      --warning-color: #f1c40f;
+      --info-color: #1abc9c;
+    }
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f8f9fa;
+      padding-top: 72px;
+    }
+    
+    h1, h2, h3, h4, h5, h6 {
+      font-family: 'Poppins', sans-serif;
+    }
+    
+    .navbar {
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      padding: 0.8rem 1rem;
+      transition: all 0.3s ease;
+    }
+    
+    .navbar-brand {
+      font-weight: 700;
+      font-size: 1.5rem;
+      letter-spacing: 1px;
+    }
+    
+    .navbar-brand i {
+      color: var(--accent-color);
+      transform: rotate(-5deg);
+      margin-right: 8px;
+      transition: transform 0.3s ease;
+    }
+    
+    .navbar-brand:hover i {
+      transform: rotate(15deg);
+    }
+    
+    .nav-link {
+      font-weight: 500;
+      padding: 0.5rem 1rem;
+      margin: 0 0.2rem;
+      border-radius: 4px;
+      transition: all 0.3s ease;
+    }
+    
+    .nav-link:hover {
+      background-color: rgba(255,255,255,0.1);
+      transform: translateY(-2px);
+    }
+    
+    .nav-link.active {
+      background-color: rgba(255,255,255,0.2);
+      color: white !important;
+    }
+    
+    .nav-link i {
+      margin-right: 5px;
+      font-size: 1.1rem;
+    }
+    
+    .navbar-toggler {
+      border: none;
+      padding: 0.5rem;
+    }
+    
+    .navbar-toggler:focus {
+      box-shadow: none;
+      outline: none;
+    }
+    
+    .navbar-toggler-icon {
+      font-size: 1.5rem;
+    }
+    
+    .btn {
+      border-radius: 4px;
+      padding: 0.5rem 1.5rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      transition: all 0.3s ease;
+    }
+    
+    .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    .btn i {
+      margin-right: 5px;
+    }
+    
+    .card {
+      border-radius: 8px;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+    
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    .badge {
+      font-weight: 500;
+      padding: 0.5em 1em;
+    }
+    
+    /* Gradiente para el navbar */
+    .navbar-gradient {
+      background: linear-gradient(135deg, var(--dark-color), #1a365d);
+    }
+    
+    /* Animación del logo */
+    .logo-animate {
+      display: inline-block;
+    }
+    
+    /* Tooltip personalizado */
+    .tooltip {
+      font-family: 'Poppins', sans-serif;
+    }
+    
+    /* Animación para la notificación */
+    .notification-dot {
+      position: absolute;
+      top: 0px;
+      right: 0px;
+      width: 8px;
+      height: 8px;
+      background-color: var(--danger-color);
+      border-radius: 50%;
+      animation: pulse 1.5s infinite;
+    }
+    
+    @keyframes pulse {
+      0% {
+        transform: scale(0.8);
+        opacity: 0.8;
+      }
+      50% {
+        transform: scale(1.2);
+        opacity: 1;
+      }
+      100% {
+        transform: scale(0.8);
+        opacity: 0.8;
+      }
+    }
+  </style>
 </head>
 <body>
-  <!-- Barra de navegación -->
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <!-- Barra superior con información de contacto -->
+  <div class="bg-light py-1 text-dark d-none d-lg-block fixed-top" style="top: 0; z-index: 1030;">
+    <div class="container">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <small><i class="bi bi-envelope-fill me-1 text-primary"></i> info@galeriafotografica.com</small>
+          <small class="ms-3"><i class="bi bi-telephone-fill me-1 text-primary"></i> +51 999 888 777</small>
+        </div>
+        <div>
+          <a href="#" class="text-dark text-decoration-none me-2" data-bs-toggle="tooltip" title="Facebook">
+            <i class="bi bi-facebook"></i>
+          </a>
+          <a href="#" class="text-dark text-decoration-none me-2" data-bs-toggle="tooltip" title="Instagram">
+            <i class="bi bi-instagram"></i>
+          </a>
+          <a href="#" class="text-dark text-decoration-none" data-bs-toggle="tooltip" title="WhatsApp">
+            <i class="bi bi-whatsapp"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark navbar-gradient fixed-top" style="top: 25px; z-index: 1020;">
     <div class="container">
       <a class="navbar-brand" href="/">
-        <i class="fas fa-gamepad me-2"></i>Tienda de Juegos
+        <span class="logo-animate animate__animated animate__fadeIn">
+          <i class="bi bi-camera"></i>
+          <span class="d-inline-block">Galería</span>
+          <span class="text-warning d-inline-block">Fotográfica</span>
+        </span>
       </a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav">
+        <ul class="navbar-nav ms-auto">
           <li class="nav-item">
-            <a class="nav-link <%= path === '/' ? 'active' : '' %>" href="/">
-              <i class="fas fa-list me-1"></i>Lista
+            <a class="nav-link <%= typeof active !== 'undefined' && active === 'inicio' ? 'active' : '' %>" href="/">
+              <i class="bi bi-house-door-fill"></i> Inicio
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link <%= path === '/catalogo' ? 'active' : '' %>" href="/catalogo">
-              <i class="fas fa-th-large me-1"></i>Catálogo
+            <a class="nav-link <%= typeof active !== 'undefined' && active === 'servicios' ? 'active' : '' %>" href="/servicios">
+              <i class="bi bi-camera-fill"></i> Servicios
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link <%= path === '/create' ? 'active' : '' %>" href="/create">
-              <i class="fas fa-plus me-1"></i>Nuevo Juego
+            <a class="nav-link <%= typeof active !== 'undefined' && active === 'categorias' ? 'active' : '' %>" href="/categorias">
+              <i class="bi bi-tags-fill"></i> Categorías
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link position-relative <%= typeof active !== 'undefined' && active === 'contacto' ? 'active' : '' %>" href="/contacto">
+              <i class="bi bi-envelope-fill"></i> Contacto
+              <span class="notification-dot"></span>
             </a>
           </li>
         </ul>
+        <div class="ms-3 d-none d-lg-block">
+          <a href="/session/login" class="btn btn-sm btn-outline-light">
+            <i class="bi bi-person-fill"></i> Iniciar Sesión
+          </a>
+        </div>
       </div>
     </div>
   </nav>
 
+  <!-- Script para detectar scroll y cambiar el navbar -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      window.addEventListener('scroll', function() {
+        const navbar = document.querySelector('.navbar');
+        if (window.scrollY > 50) {
+          navbar.style.padding = '0.5rem 1rem';
+          navbar.style.top = '0';
+        } else {
+          navbar.style.padding = '0.8rem 1rem';
+          navbar.style.top = '25px';
+        }
+      });
+
+      // Inicializar AOS (Animate on Scroll)
+      if (typeof AOS !== 'undefined') {
+        AOS.init({
+          duration: 800,
+          easing: 'ease-in-out',
+          once: true
+        });
+      }
+
+      // Inicializar tooltips
+      var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+      var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl)
+      });
+    });
+  </script>
+  
   <!-- Contenido principal -->
-  <div class="container py-4">

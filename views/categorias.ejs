@@ -1,0 +1,217 @@
+<%- include('partials/header') %>
+
+<style>
+  /* Estilos generales */
+  body {
+    background-color: #f8f9fa;
+    color: #343a40;
+    font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  }
+
+  /* Titulos */
+  h1 {
+    font-weight: 300;
+    color: #2c3e50;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid #eaecef;
+    padding-bottom: 0.5rem;
+  }
+
+  /* Panel de filtros */
+  .card-header {
+    background-color: #3a4750 !important;
+    border-bottom: none;
+    font-weight: 500;
+  }
+
+  .card {
+    border: none;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .card:hover {
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+  }
+
+  /* Contenedor de imagen */
+  .card-img-top-container {
+    height: 200px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f5f5f5;
+    border-bottom: 1px solid #f0f0f0;
+    padding: 0.5rem;
+  }
+
+  /* Badges más elegantes */
+  .badge {
+    font-weight: 500;
+    padding: 0.35em 0.65em;
+    margin-right: 0.5rem;
+    border-radius: 4px;
+  }
+
+  .badge.bg-primary {
+    background-color: #3a4750 !important;
+  }
+
+  .badge.bg-secondary {
+    background-color: #6c757d !important;
+  }
+
+  /* Título del servicio */
+  .card-title {
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin-top: 0.5rem;
+    color: #2c3e50;
+    line-height: 1.3;
+  }
+
+  /* Precio */
+  .text-primary.fw-bold {
+    color: #3a4750 !important;
+    font-size: 1.1rem;
+  }
+</style>
+
+<div class="container">
+  <h1 class="my-4">Catálogo de Servicios</h1>
+  
+  <!-- Filtros y buscador -->
+  <div class="card mb-4">
+    <div class="card-header text-white">
+      <i class="fas fa-filter me-2"></i> Filtros
+    </div>
+    <div class="card-body">
+      <form action="/catalogo" method="get" id="filtrosForm">
+        <div class="row g-3">
+          <!-- Buscador -->
+          <div class="col-md-5">
+            <div class="input-group">
+              <input 
+                type="text" 
+                class="form-control" 
+                placeholder="Buscar por nombre, descripción..." 
+                name="busqueda" 
+                value="<%= filtros.busqueda %>"
+              >
+              <button class="btn btn-outline-primary" type="submit">
+                <i class="fas fa-search"></i> Buscar
+              </button>
+            </div>
+          </div>
+          
+          <!-- Filtro de categoría -->
+          <div class="col-md-3">
+            <select class="form-select" name="categoria" onchange="this.form.submit()">
+              <option value="todas" <%= filtros.categoria === 'todas' ? 'selected' : '' %>>Todas las categorías</option>
+              <% categorias.forEach(cat => { %>
+                <option value="<%= cat.idcategoria %>" <%= filtros.categoria == cat.idcategoria ? 'selected' : '' %>>
+                  <%= cat.nomcategoria %>
+                </option>
+              <% }) %>
+            </select>
+          </div>
+          
+          <!-- Ordenamiento -->
+          <div class="col-md-3">
+            <select class="form-select" name="orden" onchange="this.form.submit()">
+              <option value="recientes" <%= filtros.orden === 'recientes' ? 'selected' : '' %>>Más recientes</option>
+              <option value="precio_desc" <%= filtros.orden === 'precio_desc' ? 'selected' : '' %>>Precio: Mayor a menor</option>
+              <option value="precio_asc" <%= filtros.orden === 'precio_asc' ? 'selected' : '' %>>Precio: Menor a mayor</option>
+              <option value="nombre_asc" <%= filtros.orden === 'nombre_asc' ? 'selected' : '' %>>Nombre: A-Z</option>
+              <option value="nombre_desc" <%= filtros.orden === 'nombre_desc' ? 'selected' : '' %>>Nombre: Z-A</option>
+            </select>
+          </div>
+          
+          <!-- Botón limpiar filtros -->
+          <div class="col-md-1">
+            <a href="/catalogo" class="btn btn-outline-secondary w-100" title="Limpiar filtros">
+              <i class="fas fa-sync-alt"></i>
+            </a>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  
+  <!-- Resultados -->
+  <div class="row">
+    <% if (servicios.length === 0) { %>
+      <div class="col-12 text-center py-5">
+        <div class="alert alert-info">
+          <h4>No se encontraron servicios</h4>
+          <p>Intenta con diferentes criterios de búsqueda o <a href="/catalogo">ver todos los servicios</a>.</p>
+        </div>
+      </div>
+    <% } else { %>
+      <!-- Contador de resultados -->
+      <div class="col-12 mb-3">
+        <p class="text-muted">Mostrando <%= servicios.length %> resultados</p>
+      </div>
+      
+      <!-- Tarjetas de servicios -->
+      <% servicios.forEach(servicio => { %>
+        <div class="col-md-4 col-lg-3 mb-4">
+          <div class="card h-100" data-id="<%= servicio.idServicio %>" data-descripcion="<%= servicio.descripcion %>">
+            <!-- Imagen del servicio -->
+            <div class="card-img-top-container">
+              <% if (servicio.img) { %>
+                <img src="<%= servicio.img %>" class="card-img-top" alt="<%= servicio.nomServicio %>" style="object-fit: contain; max-height: 100%; max-width: 100%;">
+              <% } else { %>
+                <div class="text-center p-4 text-muted">
+                  <i class="fas fa-cogs fa-3x"></i>
+                  <p class="mt-2 small">Sin imagen</p>
+                </div>
+              <% } %>
+            </div>
+            
+            <div class="card-body">
+              <!-- Título y precio -->
+              <h5 class="card-title"><%= servicio.nomServicio %></h5>
+              <h6 class="text-primary fw-bold mb-2">$<%= parseFloat(servicio.precio).toFixed(2) %></h6>
+              
+              <!-- Descripción corta -->
+              <p class="card-text">
+                <%= servicio.descripcion.length > 100 ? servicio.descripcion.substring(0, 100) + '...' : servicio.descripcion %>
+              </p>
+            </div>
+            
+            <!-- Botones de acción -->
+            <div class="card-footer bg-white">
+              <div class="d-flex justify-content-between">
+                <button class="btn btn-sm btn-outline-primary view-details" data-id="<%= servicio.idServicio %>">
+                  <i class="fas fa-eye me-1"></i> Detalles
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% }) %>
+    <% } %>
+  </div>
+</div>
+
+<!-- Modal de detalles mejorado -->
+<div class="modal fade" id="detallesModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalTitle">Detalles del servicio</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <p id="modalDescription"></p>
+        <p id="modalPrice"></p>
+        <div id="modalImage"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('partials/footer') %>

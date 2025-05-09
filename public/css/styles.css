@@ -1,0 +1,77 @@
+/* Estilos personalizados para la Galería Fotográfica */
+
+/* Estilos generales */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f8f9fa;
+  color: #343a40;
+}
+
+/* Navbar personalizado */
+.navbar-brand {
+  font-weight: 600;
+}
+
+/* Tarjetas con efecto hover */
+.card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  margin-bottom: 1.5rem;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilos para tablas */
+.table img {
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  transition: transform 0.2s ease;
+}
+
+.table img:hover {
+  transform: scale(1.05);
+}
+
+/* Botones personalizados */
+.btn {
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+/* Formularios */
+.form-control:focus, .form-select:focus {
+  border-color: #6c757d;
+  box-shadow: 0 0 0 0.25rem rgba(108, 117, 125, 0.25);
+}
+
+/* Footer */
+footer {
+  margin-top: 2rem;
+}
+
+footer a {
+  text-decoration: none;
+  transition: opacity 0.2s ease;
+}
+
+footer a:hover {
+  opacity: 0.8;
+}
+
+/* Detalles de servicio */
+.img-fluid.rounded {
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilos para pantallas más pequeñas */
+@media (max-width: 767px) {
+  .table-responsive {
+    border: none;
+  }
+  
+  .card-body {
+    padding: 1rem;
+  }
+}

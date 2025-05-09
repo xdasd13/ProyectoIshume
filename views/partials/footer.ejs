@@ -1,14 +1,211 @@
-</main>
-
-<footer>
-  <!-- Pie de página -->
+<!-- Footer con diseño mejorado -->
+<footer class="footer-area bg-gray-900 text-gray-300 py-5 mt-5">
+  <div class="container">
+    <!-- Logo y redes sociales -->
+    <div class="text-center mb-4">
+      <h4 class="text-white mb-3 fw-light">Galería<span class="text-primary">Fotográfica</span></h4>
+      <div class="social-icons mb-4">
+        <a href="#" class="me-3 text-gray-400 hover-text-white transition"><i class="bi bi-instagram fs-5"></i></a>
+        <a href="#" class="me-3 text-gray-400 hover-text-white transition"><i class="bi bi-facebook fs-5"></i></a>
+        <a href="#" class="me-3 text-gray-400 hover-text-white transition"><i class="bi bi-twitter fs-5"></i></a>
+        <a href="#" class="text-gray-400 hover-text-white transition"><i class="bi bi-pinterest fs-5"></i></a>
+      </div>
+    </div>
+    
+    <!-- Divisor sutil -->
+    <div class="divider mb-4">
+      <div class="row">
+        <div class="col-4"><hr class="border-secondary"></div>
+        <div class="col-4 text-center">
+          <i class="bi bi-camera text-primary"></i>
+        </div>
+        <div class="col-4"><hr class="border-secondary"></div>
+      </div>
+    </div>
+    
+    <!-- Secciones del footer -->
+    <div class="row g-4">
+      <div class="col-md-5">
+        <h5 class="text-white fw-light mb-3 border-start border-primary border-3 ps-2">Sobre Nosotros</h5>
+        <p class="mb-3 text-gray-400 small">Servicios profesionales de fotografía para todas tus necesidades. Capturamos momentos especiales con una mirada artística y profesional.</p>
+        <div class="newsletter mt-4">
+          <h6 class="text-white fw-light mb-2">Suscríbete a nuestro boletín</h6>
+          <div class="input-group">
+            <input type="email" class="form-control bg-transparent text-white border-secondary" placeholder="Tu email">
+            <button class="btn btn-outline-primary" type="button">Enviar</button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-3 offset-md-1">
+        <h5 class="text-white fw-light mb-3 border-start border-primary border-3 ps-2">Enlaces</h5>
+        <ul class="list-unstyled footer-links">
+          <li class="mb-2">
+            <a href="/" class="text-gray-400 text-decoration-none hover-text-white transition">
+              <i class="bi bi-chevron-right text-primary me-1 small"></i> Inicio
+            </a>
+          </li>
+          <li class="mb-2">
+            <a href="/servicios" class="text-gray-400 text-decoration-none hover-text-white transition">
+              <i class="bi bi-chevron-right text-primary me-1 small"></i> Servicios
+            </a>
+          </li>
+          <li class="mb-2">
+            <a href="/categorias" class="text-gray-400 text-decoration-none hover-text-white transition">
+              <i class="bi bi-chevron-right text-primary me-1 small"></i> Categorías
+            </a>
+          </li>
+          <li class="mb-2">
+            <a href="/galeria" class="text-gray-400 text-decoration-none hover-text-white transition">
+              <i class="bi bi-chevron-right text-primary me-1 small"></i> Galería
+            </a>
+          </li>
+          <li class="mb-2">
+            <a href="/contacto" class="text-gray-400 text-decoration-none hover-text-white transition">
+              <i class="bi bi-chevron-right text-primary me-1 small"></i> Contacto
+            </a>
+          </li>
+        </ul>
+      </div>
+      
+      <div class="col-md-3">
+        <h5 class="text-white fw-light mb-3 border-start border-primary border-3 ps-2">Contacto</h5>
+        <ul class="list-unstyled contact-info">
+          <li class="d-flex mb-3">
+            <i class="bi bi-envelope-fill text-primary me-2 mt-1"></i>
+            <span class="text-gray-400">info@galeriafoto.com</span>
+          </li>
+          <li class="d-flex mb-3">
+            <i class="bi bi-telephone-fill text-primary me-2 mt-1"></i>
+            <span class="text-gray-400">+51 123 456 789</span>
+          </li>
+          <li class="d-flex mb-3">
+            <i class="bi bi-geo-alt-fill text-primary me-2 mt-1"></i>
+            <span class="text-gray-400">Av. Fotógrafos 123, Lima, Perú</span>
+          </li>
+          <li class="d-flex">
+            <i class="bi bi-clock-fill text-primary me-2 mt-1"></i>
+            <span class="text-gray-400">Lun - Sáb: 9:00 - 18:00</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+    
+    <!-- Línea divisoria sutil -->
+    <hr class="mt-4 border-secondary">
+    
+    <!-- Copyright -->
+    <div class="row py-3">
+      <div class="col-md-6">
+        <p class="mb-0 text-gray-500 small">&copy; <%= new Date().getFullYear() %> Galería Fotográfica. Todos los derechos reservados.</p>
+      </div>
+      <div class="col-md-6 text-md-end">
+        <p class="mb-0 text-gray-500 small">Diseñado con <i class="bi bi-heart-fill text-primary"></i> para profesionales de la fotografía</p>
+      </div>
+    </div>
+  </div>
 </footer>
 
-<!-- Bootstrap 5 -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js" integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq" crossorigin="anonymous"></script>
+<!-- Bootstrap y Bootstrap Icons -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
-<!-- SweetAlert2 -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<!-- CSS personalizado para efectos sutiles -->
+<style>
+  /* Variables de colores */
+  :root {
+    --primary-color: #f0ad4e; /* Un tono ámbar que funciona bien para fotografía */
+  }
+  
+  /* Estilos para el footer */
+  .footer-area {
+    background: linear-gradient(to bottom, #212529, #111);
+  }
+  
+  .text-gray-300 {
+    color: #cbd3da;
+  }
+  
+  .text-gray-400 {
+    color: #adb5bd;
+  }
+  
+  .text-gray-500 {
+    color: #919aa1;
+  }
+  
+  .bg-gray-900 {
+    background-color: #111;
+  }
+  
+  .text-primary {
+    color: var(--primary-color) !important;
+  }
+  
+  .border-primary {
+    border-color: var(--primary-color) !important;
+  }
+  
+  .btn-outline-primary {
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+  }
+  
+  .btn-outline-primary:hover {
+    background-color: var(--primary-color);
+    color: #fff;
+  }
+  
+  /* Efectos hover suaves */
+  .hover-text-white:hover {
+    color: #fff !important;
+    transform: translateY(-2px);
+  }
+  
+  .transition {
+    transition: all 0.3s ease;
+  }
+  
+  /* Estilo para el formulario de newsletter */
+  .newsletter .form-control {
+    border-radius: 4px 0 0 4px;
+    border-right: none;
+  }
+  
+  .newsletter .form-control:focus {
+    box-shadow: none;
+    border-color: var(--primary-color);
+  }
+  
+  .newsletter .btn {
+    border-radius: 0 4px 4px 0;
+  }
+  
+  /* Estilo para los iconos sociales */
+  .social-icons a:hover {
+    transform: translateY(-3px);
+  }
+  
+  /* Efecto sutil en la sección de contacto */
+  .contact-info li:hover i {
+    transform: scale(1.2);
+  }
+  
+  .contact-info i {
+    transition: transform 0.3s ease;
+  }
+  
+  /* Mejora en links del footer */
+  .footer-links a:hover i {
+    margin-right: 0.5rem;
+  }
+  
+  .footer-links i {
+    transition: margin-right 0.3s ease;
+  }
+</style>
 
+<!-- Custom JS -->
+<script src="/js/main.js"></script>
 </body>
 </html>

@@ -1,0 +1,181 @@
+<%- include('../partials/header') %>
+
+<div class="container mt-5">
+  <!-- Encabezado de la página con estilo mejorado -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="bg-light rounded-3 p-4 shadow-sm">
+        <h1 class="display-5 fw-bold text-primary text-center">
+          <i class="bi bi-list-stars me-2"></i>Catálogo de Servicios
+        </h1>
+        <p class="text-muted text-center mb-0">Administración y gestión de servicios disponibles</p>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Sección de mensajes flash con animación -->
+  <% if (mensaje && mensaje.texto) { %>
+    <div class="alert alert-<%= mensaje.tipo %> alert-dismissible fade show shadow-sm mb-4 animate__animated animate__fadeIn" role="alert">
+      <i class="bi bi-info-circle me-2"></i><%= mensaje.texto %>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  <% } %>
+  
+  <!-- Tarjeta para contener la tabla y los controles -->
+  <div class="card shadow-sm border-0 mb-5">
+    <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
+      <!-- Estadísticas rápidas -->
+      <div>
+        <span class="badge bg-primary rounded-pill">
+          <i class="bi bi-card-list me-1"></i>
+          Total: <%= servicios.length %> servicios
+        </span>
+      </div>
+      
+      <!-- Botón para agregar nuevo servicio -->
+      <a href="/servicios/crear" class="btn btn-success btn-sm">
+        <i class="bi bi-plus-circle me-1"></i>Agregar Servicio
+      </a>
+    </div>
+    
+    <div class="card-body p-0">
+      <!-- Tabla de servicios mejorada -->
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <!-- Encabezado de la tabla -->
+          <thead class="table-light">
+            <tr>
+              <th class="text-center" style="width: 5%">ID</th>
+              <th style="width: 15%">Nombre</th>
+              <th style="width: 20%">Descripción</th>
+              <th class="text-center" style="width: 10%">Precio</th>
+              <th class="text-center" style="width: 10%">Estado</th>
+              <th class="text-center" style="width: 15%">Imagen</th>
+              <th style="width: 10%">Categoría</th>
+              <th class="text-center" style="width: 15%">Acciones</th>
+            </tr>
+          </thead>
+          
+          <!-- Cuerpo de la tabla -->
+          <tbody>
+            <% if (servicios.length > 0) { %>
+              <% servicios.forEach(servicio => { %>
+                <tr>
+                  <td class="text-center fw-bold text-muted">#<%= servicio.idServicio %></td>
+                  <td class="fw-medium"><%= servicio.nomServicio %></td>
+                  <td><small><%= servicio.descripcion.length > 50 ? servicio.descripcion.substring(0, 50) + '...' : servicio.descripcion %></small></td>
+                  <td class="text-center fw-bold">S/ <%= parseFloat(servicio.precio || 0).toFixed(2) %></td>
+                  <td class="text-center">
+                    <span class="badge bg-<%= servicio.disponible === 'activo' ? 'success' : 'danger' %> rounded-pill">
+                      <i class="bi bi-<%= servicio.disponible === 'activo' ? 'check-circle' : 'x-circle' %> me-1"></i>
+                      <%= servicio.disponible === 'activo' ? 'Activo' : 'Inactivo' %>
+                    </span>
+                  </td>
+                  <td class="text-center">
+                    <% if (servicio.imgReferencia) { %>
+                      <img src="<%= servicio.imgReferencia %>" alt="<%= servicio.nomServicio %>" 
+                           width="80" height="60" class="img-thumbnail shadow-sm" style="object-fit: cover;">
+                    <% } else { %>
+                      <div class="bg-light rounded p-2 text-center">
+                        <i class="bi bi-image text-muted"></i>
+                        <small class="d-block text-muted">Sin imagen</small>
+                      </div>
+                    <% } %>
+                  </td>
+                  <td>
+                    <span class="badge bg-info text-dark">
+                      <%= servicio.nombreCategoria || 'Sin categoría' %>
+                    </span>
+                  </td>
+                  <td>
+                    <div class="btn-group btn-group-sm" role="group">
+                      <a href="/servicios/<%= servicio.idServicio %>" class="btn btn-outline-primary" 
+                         data-bs-toggle="tooltip" title="Ver detalles">
+                        <i class="bi bi-eye"></i>
+                      </a>
+                      <a href="/servicios/editar/<%= servicio.idServicio %>" class="btn btn-outline-warning" 
+                         data-bs-toggle="tooltip" title="Editar servicio">
+                        <i class="bi bi-pencil"></i>
+                      </a>
+                      <a href="/servicios/eliminar/<%= servicio.idServicio %>" class="btn btn-outline-danger delete" 
+                         data-bs-toggle="tooltip" title="Eliminar servicio">
+                        <i class="bi bi-trash"></i>
+                      </a>
+                    </div>
+                  </td>
+                </tr>
+              <% }) %>
+            <% } else { %>
+              <tr>
+                <td colspan="8" class="text-center p-5">
+                  <div class="py-5">
+                    <i class="bi bi-inbox display-1 text-muted"></i>
+                    <p class="lead mt-3 text-muted">No hay servicios registrados.</p>
+                    <a href="/servicios/crear" class="btn btn-primary btn-sm mt-2">
+                      <i class="bi bi-plus-circle me-1"></i>Crear el primer servicio
+                    </a>
+                  </div>
+                </td>
+              </tr>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    
+    <% if (servicios.length > 0) { %>
+      <div class="card-footer bg-white text-muted small py-2">
+        <i class="bi bi-info-circle me-1"></i> 
+        Mostrando todos los servicios. Haga clic en los botones de acción para gestionar cada servicio.
+      </div>
+    <% } %>
+  </div>
+</div>
+
+<!-- Scripts -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    // Inicializar tooltips de Bootstrap
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.map(function (tooltipTriggerEl) {
+      return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+    
+    // Configuración de confirmaciones para eliminar servicios
+    const enlacesEliminar = document.querySelectorAll(".delete");
+
+    enlacesEliminar.forEach(enlace => {
+      enlace.addEventListener("click", (event) => {
+        event.preventDefault();
+
+        Swal.fire({
+          title: '¿Eliminar este servicio?',
+          text: 'Esta acción no se puede deshacer',
+          icon: 'warning',
+          iconColor: '#dc3545',
+          showCancelButton: true,
+          confirmButtonColor: '#dc3545',
+          cancelButtonColor: '#6c757d',
+          confirmButtonText: '<i class="bi bi-trash me-1"></i>Sí, eliminar',
+          cancelButtonText: '<i class="bi bi-x-circle me-1"></i>Cancelar',
+          footer: '<span class="text-muted small">Galería Fotográfica - Sistema de Gestión</span>',
+          backdrop: true,
+          showClass: {
+            popup: 'animate__animated animate__fadeIn animate__faster'
+          },
+          hideClass: {
+            popup: 'animate__animated animate__fadeOut animate__faster'
+          }
+        }).then((result) => {
+          if(result.isConfirmed) {
+            window.location.href = event.target.closest('a').getAttribute("href");
+          }
+        });
+      });
+    });
+  });
+</script>
+
+<%- include('../partials/footer') %> 

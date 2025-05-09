@@ -1,42 +1,84 @@
+// Aplicación principal para la Galería Fotográfica
 const express = require('express');
-const bodyParser = require('body-parser');
 const path = require('path');
-const multer = require('multer');
+const morgan = require('morgan');
+const session = require('express-session');
+const flash = require('connect-flash');
+const fs = require('fs');
+require('dotenv').config();
 
-// Acceso a rutas
-const rutaJuego = require('./routes/juegos');
+// Importar rutas
+const servicioRoutes = require('./routes/servicioRoutes.js');
+// Importar otros archivos de rutas cuando sea necesario
+// const categoriaRoutes = require('./routes/categoriaRoutes');
+// const usuarioRoutes = require('./routes/usuarioRoutes');
 
-// Iniciar la app
+// Inicializar la aplicación Express
 const app = express();
+
+// Configurar puerto
 const PORT = process.env.PORT || 3000;
 
-// Configurar "middleware" => "capa de comunicación"
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
-app.use(express.static(path.join(__dirname, 'public')));
+// Configurar middleware
+app.use(morgan('dev')); // Logging de solicitudes HTTP
+app.use(express.json()); // Parsear solicitudes JSON
+app.use(express.urlencoded({ extended: false })); // Parsear solicitudes de formularios
 
-// Crear la carpeta de uploads si no existe
-const fs = require('fs');
-const uploadsDir = path.join(__dirname, 'public/uploads');
-if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir, { recursive: true });
-}
+// Configurar sesiones y flash messages
+app.use(session({
+  secret: process.env.SESSION_SECRET || 'secreto-de-galeria',
+  resave: false,
+  saveUninitialized: false,
+  cookie: { maxAge: 60 * 60 * 1000 } // 1 hora
+}));
+app.use(flash());
 
-// Motor de plantillas
+// Middleware para variables globales
+app.use((req, res, next) => {
+  res.locals.mensaje = req.flash('mensaje');
+  res.locals.usuario = req.session.usuario || null;
+  next();
+});
+
+// Configurar motor de vistas
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
-// Configuración de rutas
-app.use('/', rutaJuego);  // Usar la ruta para manejar los juegos
-// app.use('/api/categorias', rutaCategoria);  // Descomentar si tienes rutas para las categorías
+// Configurar archivos estáticos
+app.use(express.static(path.join(__dirname, 'public')));
 
-// Manejo de errores generales
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).send('¡Algo salió mal!');
+// Asegurar que exista el directorio de uploads
+const uploadDir = path.join(__dirname, 'public', 'uploads');
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
+
+// Rutas
+app.use('/servicios', servicioRoutes);
+// Usar otras rutas cuando sea necesario
+// app.use('/categorias', categoriaRoutes);
+// app.use('/usuarios', usuarioRoutes);
+
+// Ruta de inicio
+app.get('/', (req, res) => {
+  res.render('index', { titulo: 'Inicio' });
 });
 
-// Servidor Web
+// Manejo de errores 404
+app.use((req, res, next) => {
+  res.status(404).render('404', { titulo: 'Página no encontrada' });
+});
+
+// Manejo de errores
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).render('error', { 
+    titulo: 'Error', 
+    error: process.env.NODE_ENV === 'production' ? {} : err 
+  });
+});
+
+// Iniciar el servidor
 app.listen(PORT, () => {
-  console.log(`Servidor iniciado en http://localhost:${PORT}`);
+  console.log(`Servidor en funcionamiento en http://localhost:${PORT}`);
 });

@@ -1,0 +1,59 @@
+<%- include('../partials/header') %>
+
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-md-8 offset-md-2">
+      <div class="card">
+        <div class="card-header bg-success text-white">
+          <h4 class="mb-0">Nuevo Servicio</h4>
+        </div>
+        <div class="card-body">
+          <form action="/servicios/crear" method="POST" enctype="multipart/form-data">
+            <div class="mb-3">
+              <label for="nomServicio" class="form-label">Nombre del Servicio</label>
+              <input type="text" class="form-control" id="nomServicio" name="nomServicio" required>
+            </div>
+            
+            <div class="mb-3">
+              <label for="descripcion" class="form-label">Descripción</label>
+              <textarea class="form-control" id="descripcion" name="descripcion" rows="3" required></textarea>
+            </div>
+            
+            <div class="mb-3">
+              <label for="precio" class="form-label">Precio (S/)</label>
+              <input type="number" class="form-control" id="precio" name="precio" step="0.01" min="0" required>
+            </div>
+            
+            <div class="mb-3">
+              <label for="idCategoria" class="form-label">Categoría</label>
+              <select class="form-select" id="idCategoria" name="idCategoria" required>
+                <option value="" selected disabled>Seleccione una categoría</option>
+                <% categorias.forEach(categoria => { %>
+                  <option value="<%= categoria.idCategoria %>"><%= categoria.nomCategoria %></option>
+                <% }) %>
+              </select>
+            </div>
+            
+            <div class="mb-3">
+              <label for="imgReferencia" class="form-label">Imagen del Servicio</label>
+              <input type="file" class="form-control" id="imgReferencia" name="imgReferencia" accept="image/*">
+              <div class="form-text">Formatos permitidos: JPG, PNG, GIF, WebP. Tamaño máximo: 5MB</div>
+            </div>
+            
+            <div class="mb-3 form-check">
+              <input type="checkbox" class="form-check-input" id="disponible" name="disponible" checked>
+              <label class="form-check-label" for="disponible">Disponible</label>
+            </div>
+            
+            <div class="d-flex justify-content-between">
+              <a href="/servicios" class="btn btn-secondary">Cancelar</a>
+              <button type="submit" class="btn btn-success">Guardar Servicio</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

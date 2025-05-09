@@ -1,65 +1,262 @@
 <%- include('partials/header') %>
 
-<div class="table-responsive">
-  <table class="table table-sm">
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Nombre</th>
-        <th>Precio</th>
-        <th>Clasificación</th>
-        <th>Editor</th>
-        <th>Categoría</th>
-        <th>Plataforma</th>
-        <th>Operaciones</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% juegos.forEach(juego => { %>
-      <tr>
-        <td><%= juego.idjuego %></td>
-        <td><%= juego.nomjuego %></td>
-        <td><%= juego.precio %></td>
-        <td><%= juego.clasificacion %></td>
-        <td><%= juego.editor %></td>
-        <td><%= juego.categoria %></td>
-        <td><%= juego.plataforma %></td>
-        <td>
-          <a href="/edit/<%= juego.idjuego %>" class="btn btn-sm btn-info">Editar</a>
-          <a href="/delete/<%= juego.idjuego %>" class="btn btn-sm btn-danger delete">Eliminar</a>
-        </td>
-      </tr>
-      <% }) %>
-    </tbody>
-  </table>
+<div class="container mt-5">
+  <!-- Mensaje de flash -->
+  <% if (mensaje && mensaje.texto) { %>
+    <div class="alert alert-<%= mensaje.tipo %> alert-dismissible fade show" role="alert">
+      <%= mensaje.texto %>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  <% } %>
+
+  <!-- Hero Section Mejorado -->
+  <div class="jumbotron bg-light p-5 rounded shadow-sm position-relative overflow-hidden">
+    <div class="position-absolute top-0 end-0 opacity-25">
+      <i class="bi bi-camera2 display-1 text-primary"></i>
+    </div>
+    <h1 class="display-4 fw-bold text-primary">Bienvenido a la Galería Fotográfica</h1>
+    <p class="lead fs-4">Sistema de gestión de servicios fotográficos profesionales para capturar momentos inolvidables</p>
+    <hr class="my-4">
+    <p class="mb-4">Explore nuestros servicios especializados o administre el catálogo fotográfico de manera eficiente y profesional.</p>
+    <div class="d-flex gap-3">
+      <a class="btn btn-primary btn-lg" href="/servicios" role="button">
+        <i class="bi bi-images me-2"></i>Ver Servicios
+      </a>
+      <a class="btn btn-outline-secondary btn-lg" href="/contacto" role="button">
+        <i class="bi bi-chat-dots me-2"></i>Contactar
+      </a>
+    </div>
+  </div>
+
+  <!-- Estadísticas -->
+  <div class="row mt-5 text-center py-4 bg-light rounded shadow-sm">
+    <div class="col-md-3 mb-3">
+      <div class="d-flex flex-column align-items-center">
+        <i class="bi bi-camera text-primary display-4 mb-2"></i>
+        <h3 class="fw-bold">+500</h3>
+        <p class="text-muted">Sesiones Completadas</p>
+      </div>
+    </div>
+    <div class="col-md-3 mb-3">
+      <div class="d-flex flex-column align-items-center">
+        <i class="bi bi-people text-primary display-4 mb-2"></i>
+        <h3 class="fw-bold">+300</h3>
+        <p class="text-muted">Clientes Satisfechos</p>
+      </div>
+    </div>
+    <div class="col-md-3 mb-3">
+      <div class="d-flex flex-column align-items-center">
+        <i class="bi bi-tag text-primary display-4 mb-2"></i>
+        <h3 class="fw-bold">15</h3>
+        <p class="text-muted">Servicios Especializados</p>
+      </div>
+    </div>
+    <div class="col-md-3 mb-3">
+      <div class="d-flex flex-column align-items-center">
+        <i class="bi bi-award text-primary display-4 mb-2"></i>
+        <h3 class="fw-bold">10</h3>
+        <p class="text-muted">Años de Experiencia</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Servicios Principales -->
+  <h2 class="text-center my-5 fw-bold">Gestión de Servicios</h2>
+  <div class="row mt-4">
+    <div class="col-md-4 mb-4">
+      <div class="card h-100 shadow-sm border-0 transition-hover">
+        <div class="card-body">
+          <div class="text-center mb-3">
+            <i class="bi bi-camera-fill text-primary display-4"></i>
+          </div>
+          <h5 class="card-title text-center fw-bold"><i class="bi bi-camera-fill me-2"></i>Servicios Fotográficos</h5>
+          <p class="card-text">Administre todos los servicios fotográficos disponibles en la galería. Añada descripciones detalladas, establezca precios y gestione la disponibilidad.</p>
+          <ul class="list-unstyled mb-4">
+            <li><i class="bi bi-check-circle-fill text-success me-2"></i>Gestión de precios</li>
+            <li><i class="bi bi-check-circle-fill text-success me-2"></i>Control de disponibilidad</li>
+            <li><i class="bi bi-check-circle-fill text-success me-2"></i>Galería de ejemplos</li>
+          </ul>
+          <div class="text-center">
+            <a href="/servicios" class="btn btn-primary">
+              <i class="bi bi-gear-fill me-2"></i>Gestionar Servicios
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4 mb-4">
+      <div class="card h-100 shadow-sm border-0 transition-hover">
+        <div class="card-body">
+          <div class="text-center mb-3">
+            <i class="bi bi-tags-fill text-primary display-4"></i>
+          </div>
+          <h5 class="card-title text-center fw-bold"><i class="bi bi-tags-fill me-2"></i>Categorías</h5>
+          <p class="card-text">Organice los servicios por categorías para una mejor clasificación. Cree categorías personalizadas para segmentar su oferta fotográfica de manera eficiente.</p>
+          <ul class="list-unstyled mb-4">
+            <li><i class="bi bi-check-circle-fill text-success me-2"></i>Organización jerárquica</li>
+            <li><i class="bi bi-check-circle-fill text-success me-2"></i>Filtros avanzados</li>
+            <li><i class="bi bi-check-circle-fill text-success me-2"></i>Estadísticas por categoría</li>
+          </ul>
+          <div class="text-center">
+            <a href="/categorias" class="btn btn-primary">
+              <i class="bi bi-folder-fill me-2"></i>Gestionar Categorías
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4 mb-4">
+      <div class="card h-100 shadow-sm border-0 transition-hover">
+        <div class="card-body">
+          <div class="text-center mb-3">
+            <i class="bi bi-calendar-check text-primary display-4"></i>
+          </div>
+          <h5 class="card-title text-center fw-bold"><i class="bi bi-calendar-check me-2"></i>Citas</h5>
+          <p class="card-text">Visualice y administre las citas de los clientes. Consulte el calendario completo, reciba notificaciones y gestione la agenda fotográfica.</p>
+          <ul class="list-unstyled mb-4">
+            <li><i class="bi bi-check-circle-fill text-success me-2"></i>Vista de calendario</li>
+            <li><i class="bi bi-check-circle-fill text-success me-2"></i>Recordatorios automáticos</li>
+            <li><i class="bi bi-check-circle-fill text-success me-2"></i>Historial de sesiones</li>
+          </ul>
+          <div class="text-center">
+            <a href="/citas" class="btn btn-primary">
+              <i class="bi bi-calendar2-week me-2"></i>Gestionar Citas
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Funcionalidades Adicionales -->
+  <div class="row mt-5">
+    <div class="col-md-6 mb-4">
+      <div class="card h-100 bg-primary text-white shadow-sm border-0">
+        <div class="card-body">
+          <h4 class="card-title"><i class="bi bi-graph-up me-2"></i>Panel de Administración</h4>
+          <p class="card-text">Acceda a estadísticas detalladas, informes de rendimiento y herramientas avanzadas para la gestión de su negocio fotográfico.</p>
+          <a href="/admin/dashboard" class="btn btn-light">Ir al Dashboard</a>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 mb-4">
+      <div class="card h-100 bg-success text-white shadow-sm border-0">
+        <div class="card-body">
+          <h4 class="card-title"><i class="bi bi-people-fill me-2"></i>Gestión de Clientes</h4>
+          <p class="card-text">Mantenga un registro completo de sus clientes, historial de compras y preferencias para un servicio personalizado.</p>
+          <a href="/clientes" class="btn btn-light">Gestionar Clientes</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Testimonios -->
+  <h2 class="text-center my-5 fw-bold">Lo que dicen nuestros clientes</h2>
+  <div class="row">
+    <div class="col-md-4 mb-4">
+      <div class="card h-100 shadow-sm border-0">
+        <div class="card-body">
+          <div class="mb-3 text-warning">
+            <i class="bi bi-star-fill"></i>
+            <i class="bi bi-star-fill"></i>
+            <i class="bi bi-star-fill"></i>
+            <i class="bi bi-star-fill"></i>
+            <i class="bi bi-star-fill"></i>
+          </div>
+          <p class="card-text fst-italic">"El sistema de gestión ha mejorado enormemente la organización de nuestro estudio fotográfico. La interfaz es intuitiva y los clientes están encantados con el servicio."</p>
+          <div class="d-flex align-items-center mt-3">
+            <div class="flex-shrink-0">
+              <i class="bi bi-person-circle display-6"></i>
+            </div>
+            <div class="flex-grow-1 ms-3">
+              <h6 class="fw-bold mb-0">María Rodríguez</h6>
+              <small class="text-muted">Estudio Fotográfico Luminare</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4 mb-4">
+      <div class="card h-100 shadow-sm border-0">
+        <div class="card-body">
+          <div class="mb-3 text-warning">
+            <i class="bi bi-star-fill"></i>
+            <i class="bi bi-star-fill"></i>
+            <i class="bi bi-star-fill"></i>
+            <i class="bi bi-star-fill"></i>
+            <i class="bi bi-star-half"></i>
+          </div>
+          <p class="card-text fst-italic">"La gestión de citas y el seguimiento de clientes son excelentes. Ha simplificado nuestros procesos administrativos y nos permite concentrarnos en lo que realmente importa: la fotografía."</p>
+          <div class="d-flex align-items-center mt-3">
+            <div class="flex-shrink-0">
+              <i class="bi bi-person-circle display-6"></i>
+            </div>
+            <div class="flex-grow-1 ms-3">
+              <h6 class="fw-bold mb-0">Carlos Méndez</h6>
+              <small class="text-muted">FotoArte Professional</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4 mb-4">
+      <div class="card h-100 shadow-sm border-0">
+        <div class="card-body">
+          <div class="mb-3 text-warning">
+            <i class="bi bi-star-fill"></i>
+            <i class="bi bi-star-fill"></i>
+            <i class="bi bi-star-fill"></i>
+            <i class="bi bi-star-fill"></i>
+            <i class="bi bi-star-fill"></i>
+          </div>
+          <p class="card-text fst-italic">"La categorización de servicios es muy flexible y se adapta perfectamente a nuestras necesidades. Los reportes generados nos ayudan a tomar mejores decisiones de negocio."</p>
+          <div class="d-flex align-items-center mt-3">
+            <div class="flex-shrink-0">
+              <i class="bi bi-person-circle display-6"></i>
+            </div>
+            <div class="flex-grow-1 ms-3">
+              <h6 class="fw-bold mb-0">Laura Gómez</h6>
+              <small class="text-muted">Memorias Fotográficas</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Call to Action -->
+  <div class="row mt-5 mb-5">
+    <div class="col-12">
+      <div class="p-5 text-center bg-primary text-white rounded shadow-sm">
+        <h2 class="fw-bold">¿Listo para mejorar su gestión fotográfica?</h2>
+        <p class="lead">Comience ahora a explorar todas las funcionalidades que nuestro sistema ofrece</p>
+        <div class="d-flex justify-content-center gap-3 mt-4">
+          <a href="/registro" class="btn btn-light btn-lg">
+            <i class="bi bi-person-plus me-2"></i>Crear Cuenta
+          </a>
+          <a href="/demo" class="btn btn-outline-light btn-lg">
+            <i class="bi bi-play-circle me-2"></i>Ver Demo
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const enlacesEliminar = document.querySelectorAll(".delete");
+<!-- Estilos personalizados -->
+<style>
+  .transition-hover {
+    transition: transform 0.3s ease;
+  }
+  .transition-hover:hover {
+    transform: translateY(-5px);
+  }
+  .card {
+    border-radius: 10px;
+  }
+  .jumbotron {
+    border-radius: 15px;
+  }
+</style>
 
-    enlacesEliminar.forEach(enlace => {
-      enlace.addEventListener("click", (event) => {
-        event.preventDefault();
-
-        Swal.fire({
-          title: 'Juegos',
-          text: '¿Está seguro de eliminar este juego?',
-          icon: 'question',
-          footer: 'Tienda de Juegos - Proyecto Node.js',
-          confirmButtonText: 'Aceptar',
-          confirmButtonColor: '#2980b9',
-          showCancelButton: true,
-          cancelButtonText: 'Cancelar',
-          cancelButtonColor: '#c0392b'
-        }).then((result) => {
-          if(result.isConfirmed) {
-            window.location.href = event.target.getAttribute("href");
-          }
-        });
-      });
-    });
-  });
-</script>
 <%- include('partials/footer') %>

@@ -1,35 +1,42 @@
-CREATE DATABASE IF NOT EXISTS dbgaleria;
+CREATE DATABASE dbgaleria;
 USE dbgaleria;
 
+-- Tabla de categorías
+CREATE TABLE categorias(
+    idCategoria INT AUTO_INCREMENT PRIMARY KEY,
+    nomCategoria VARCHAR(50) NOT NULL,
+    fechaCreacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    fechaModificacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
 -- Tabla de servicios
--- Esta tabla almacena información sobre los servicios ofrecidos en la galería.
 CREATE TABLE servicios(
     idServicio INT AUTO_INCREMENT PRIMARY KEY,
     nomServicio VARCHAR(50) NOT NULL,
     descripcion TEXT NOT NULL,
     precio DECIMAL(10,2) NOT NULL,
+    imgReferencia VARCHAR(255) NOT NULL,
+    disponible ENUM('activo', 'inactivo') DEFAULT 'activo',
+    idCategoria INT NOT NULL,
     fechaCreacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     fechaModificacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    imgReferencia VARCHAR(255) NOT NULL,
-    disponible ENUM('activo', 'inactivo') DEFAULT 'activo'
-)ENGINE = INNODB;
+    FOREIGN KEY (idCategoria) REFERENCES categorias(idCategoria)
+) ENGINE=InnoDB;
 
 -- Tabla de usuarios
--- Esta tabla almacena información sobre los usuarios registrados en la galería.
 CREATE TABLE usuarios(
     idUsuario INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(50) NOT NULL,
     apellido VARCHAR(50) NOT NULL,
     email VARCHAR(100) NOT NULL UNIQUE,
     contrasena VARCHAR(255) NOT NULL,
-    fechaRegistro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    fechaUltimoAcceso TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     rol ENUM('admin', 'usuario') DEFAULT 'usuario',
-    estado ENUM('activo', 'inactivo') DEFAULT 'activo'
-)ENGINE = INNODB;
+    estado ENUM('activo', 'inactivo') DEFAULT 'activo',
+    fechaRegistro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    fechaUltimoAcceso TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
 
 -- Tabla de citas
--- Esta tabla almacena información sobre las citas programadas por los usuarios.
 CREATE TABLE citas(
     idCita INT AUTO_INCREMENT PRIMARY KEY,
     idUsuario INT NOT NULL,
@@ -40,10 +47,9 @@ CREATE TABLE citas(
     fechaModificacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (idUsuario) REFERENCES usuarios(idUsuario),
     FOREIGN KEY (idServicio) REFERENCES servicios(idServicio)
-)ENGINE = INNODB;
+) ENGINE=InnoDB;
 
 -- Tabla de comentarios
--- Esta tabla almacena comentarios y valoraciones de los usuarios sobre los servicios.
 CREATE TABLE comentarios(
     idComentario INT AUTO_INCREMENT PRIMARY KEY,
     idUsuario INT NOT NULL,
@@ -54,15 +60,21 @@ CREATE TABLE comentarios(
     fechaModificacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (idUsuario) REFERENCES usuarios(idUsuario),
     FOREIGN KEY (idServicio) REFERENCES servicios(idServicio)
-)ENGINE = INNODB;
+) ENGINE=InnoDB;
+
+-- Insertar categorías
+INSERT INTO categorias (nomCategoria) VALUES 
+('Retratos'),
+('Productos'),
+('Edición Digital');
 
 
--- Insertar servicios
-INSERT INTO servicios (nomServicio, descripcion, precio, imgReferencia, disponible)
+-- Insertar servicios (asociados a las categorías)
+INSERT INTO servicios (nomServicio, descripcion, precio, imgReferencia, disponible, idCategoria)
 VALUES 
-('Retrato Artístico', 'Sesión fotográfica personalizada en estudio con fondo artístico.', 120.00, 'img/retrato_artistico.jpg', 'activo'),
-('Fotografía de Producto', 'Captura profesional de productos para e-commerce o catálogos.', 90.00, 'img/fotografia_producto.jpg', 'activo'),
-('Edición Digital', 'Retoque y edición profesional de fotografías digitales.', 60.00, 'img/edicion_digital.jpg', 'activo');
+('Retrato Artístico', 'Sesión fotográfica personalizada en estudio con fondo artístico.', 120.00, 'img/retrato_artistico.jpg', 'activo', 1),
+('Fotografía de Producto', 'Captura profesional de productos para e-commerce o catálogos.', 90.00, 'img/fotografia_producto.jpg', 'activo', 2),
+('Edición Digital', 'Retoque y edición profesional de fotografías digitales.', 60.00, 'img/edicion_digital.jpg', 'activo', 3);
 
 -- Insertar usuarios
 INSERT INTO usuarios (nombre, apellido, email, contrasena, rol, estado)
@@ -83,18 +95,18 @@ VALUES
 (1, 1, 'El retrato quedó increíble, muy profesional.', 5),
 (2, 2, 'Buen trabajo en general, aunque esperaba más iluminación.', 4);
 
-
--- Consultar todos los servicios con sus respectivos comentarios y valoraciones
--- Esta consulta obtiene todos los servicios junto con los comentarios y valoraciones de los usuarios.
+-- Consulta de servicios con comentarios y categorías
 SELECT 
     s.idServicio,
     s.nomServicio,
+    cat.nomCategoria,
     u.nombre AS nombreUsuario,
     u.apellido AS apellidoUsuario,
     c.fechaCita,
     com.comentario,
     com.valoracion
 FROM servicios s
+JOIN categorias cat ON s.idCategoria = cat.idCategoria
 JOIN citas c ON s.idServicio = c.idServicio
 JOIN usuarios u ON c.idUsuario = u.idUsuario
 LEFT JOIN comentarios com 
