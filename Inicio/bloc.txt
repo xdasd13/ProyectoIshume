@@ -1,0 +1,13 @@
+Palabras claves para el chatbox
+1: hola
+2: precio
+3: servicio
+4: ubicacion
+5: horario
+6: contacto
+7: boda
+8: quinceañera
+9: graduación
+10: equipo
+11: protafolio
+12: reserva

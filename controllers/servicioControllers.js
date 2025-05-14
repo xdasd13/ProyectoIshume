@@ -93,52 +93,76 @@ const servicioController = {
     }
   },
 
-  // Actualizar servicio
+  
+  // Actualizar servicio - VERSIÓN CORREGIDA CON MANEJO DE REINTENTOS
   actualizar: async (req, res) => {
-    try {
-      const idServicio = req.params.id;
-      const { nomServicio, descripcion, precio, disponible, idCategoria } = req.body;
-      
-      // Obtener el servicio actual para verificar si tiene imagen
-      const servicioActual = await Servicio.getById(idServicio);
-      
-      if (!servicioActual) {
-        req.flash('mensaje', { tipo: 'warning', texto: 'El servicio no existe' });
-        return res.redirect('/servicios');
-      }
-      
-      // Crear objeto servicio con los datos actualizados
-      const servicio = {
-        nomServicio,
-        descripcion,
-        precio: parseFloat(precio),
-        disponible: disponible === 'on' ? 'activo' : 'inactivo',
-        idCategoria: parseInt(idCategoria)
-      };
-
-      // Si hay nueva imagen subida, actualizar la ruta y eliminar la anterior
-      if (req.file) {
-        servicio.imgReferencia = `/uploads/${req.file.filename}`;
+    let intentos = 3; // Número máximo de intentos
+    let error;
+    
+    while (intentos > 0) {
+      try {
+        const idServicio = req.params.id;
+        const { nomServicio, descripcion, precio, disponible, idCategoria } = req.body;
         
-        // Eliminar la imagen anterior si existe y no es la imagen por defecto
-        if (servicioActual.imgReferencia && !servicioActual.imgReferencia.includes('no-image.png')) {
-          const rutaImagenAnterior = path.join(__dirname, '../public', servicioActual.imgReferencia);
-          if (fs.existsSync(rutaImagenAnterior)) {
-            fs.unlinkSync(rutaImagenAnterior);
+        // Obtener el servicio actual para verificar si tiene imagen
+        const servicioActual = await Servicio.getById(idServicio);
+        
+        if (!servicioActual) {
+          req.flash('mensaje', { tipo: 'warning', texto: 'El servicio no existe' });
+          return res.redirect('/servicios');
+        }
+        
+        // Crear objeto servicio con los datos actualizados
+        const servicio = {
+          nomServicio,
+          descripcion,
+          precio: parseFloat(precio),
+          disponible: disponible === 'on' ? 'activo' : 'inactivo',
+          idCategoria: parseInt(idCategoria)
+        };
+
+        // Si hay nueva imagen subida, actualizar la ruta y eliminar la anterior
+        if (req.file) {
+          servicio.imgReferencia = `/uploads/${req.file.filename}`;
+          
+          // Eliminar la imagen anterior si existe y no es la imagen por defecto
+          if (servicioActual.imgReferencia && !servicioActual.imgReferencia.includes('no-image.png')) {
+            const rutaImagenAnterior = path.join(__dirname, '../public', servicioActual.imgReferencia);
+            if (fs.existsSync(rutaImagenAnterior)) {
+              fs.unlinkSync(rutaImagenAnterior);
+            }
           }
         }
-      }
 
-      // Actualizar servicio en la base de datos
-      await Servicio.update(idServicio, servicio);
-      
-      req.flash('mensaje', { tipo: 'success', texto: 'Servicio actualizado correctamente' });
-      res.redirect('/servicios');
-    } catch (error) {
-      console.error(`Error al actualizar servicio:`, error);
-      req.flash('mensaje', { tipo: 'danger', texto: 'Error al actualizar el servicio' });
-      res.redirect(`/servicios/editar/${req.params.id}`);
+        // Actualizar servicio en la base de datos
+        await Servicio.update(idServicio, servicio);
+        
+        req.flash('mensaje', { tipo: 'success', texto: 'Servicio actualizado correctamente' });
+        return res.redirect('/servicios');
+      } catch (err) {
+        error = err;
+        console.error(`Error al actualizar servicio (Intento ${4-intentos}/3):`, error);
+        
+        // Si es un error de timeout, esperamos y reintentamos
+        if (error.code === 'ER_LOCK_WAIT_TIMEOUT' && intentos > 1) {
+          intentos--;
+          // Esperar un tiempo exponencial antes de reintentar (1s, 2s, 4s...)
+          const tiempoEspera = Math.pow(2, 3-intentos) * 1000;
+          console.log(`Reintentando en ${tiempoEspera/1000} segundos...`);
+          await new Promise(resolve => setTimeout(resolve, tiempoEspera));
+        } else {
+          // Si no es error de timeout o ya no hay más intentos, salimos del bucle
+          break;
+        }
+      }
     }
+    
+    // Si llegamos aquí, es que todos los intentos fallaron
+    req.flash('mensaje', { 
+      tipo: 'danger', 
+      texto: `Error al actualizar el servicio: ${error.message || 'Error desconocido'}` 
+    });
+    res.redirect(`/servicios/editar/${req.params.id}`);
   },
 
   // Eliminar servicio

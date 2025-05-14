@@ -71,16 +71,40 @@
     </div>
 </section>
     <!-- Acerca de nosotros -->
-    <section class="about" id="acerca">
-        <div class="about-image"></div>
-        <div class="about-text">
-            <h2 class="section-title">Acerca de Nosotros</h2>
-            <h3>Capturando historias desde 2022</h3>
-            <p>En Ishume Productora no solo tomamos fotos y videos, creamos experiencias visuales únicas que permiten revivir tus momentos más especiales con la misma intensidad emocional años después.</p>
-            <p>Nuestro equipo de profesionales apasionados por la fotografía y el video trabaja con un enfoque artístico y personalizado para cada cliente, capturando la esencia de cada momento con un estilo distintivo y contemporáneo.</p>
-            <p>Utilizamos tecnología de última generación combinada con técnicas cinematográficas para crear contenido visual de alta calidad que se convierte en un tesoro para toda la vida.</p>
+<section class="about" id="acerca">
+    <div class="about-image"></div>
+    <div class="about-text">
+        <h2 class="section-title">Acerca de Nosotros</h2>
+        <h3>Capturando historias desde 2022</h3>
+        <p>En Ishume Productora no solo tomamos fotos y videos, creamos experiencias visuales únicas que permiten revivir tus momentos más especiales con la misma intensidad emocional años después.</p>
+        <p>Nuestro equipo de profesionales apasionados por la fotografía y el video trabaja con un enfoque artístico y personalizado para cada cliente, capturando la esencia de cada momento con un estilo distintivo y contemporáneo.</p>
+        <p>Utilizamos tecnología de última generación combinada con técnicas cinematográficas para crear contenido visual de alta calidad que se convierte en un tesoro para toda la vida.</p>
+        
+        <div class="text-to-speech">
+            <button id="ttsButton" class="tts-button">
+                <span class="tts-icon">🔊</span>
+                <span class="tts-play-text">Escuchar</span>
+                <span class="tts-pause-text">Pausar</span>
+            </button>
+            <div class="tts-controls">
+                <div class="tts-volume-control">
+                    <label for="ttsVolume">Volumen:</label>
+                    <input type="range" id="ttsVolume" min="0" max="1" step="0.1" value="0.8">
+                </div>
+                <div class="tts-speed-control">
+                    <label for="ttsRate">Velocidad:</label>
+                    <input type="range" id="ttsRate" min="0.5" max="2" step="0.1" value="1">
+                </div>
+                <select id="ttsVoice" class="tts-voice-select">
+                    <option value="">Seleccionar voz</option>
+                </select>
+            </div>
+            <div id="ttsProgress" class="tts-progress">
+                <div id="ttsProgressBar" class="tts-progress-bar"></div>
+            </div>
         </div>
-    </section>
+    </div>
+</section>
 
     <!-- Servicios -->
     <section class="services" id="servicios">
@@ -326,6 +350,39 @@
             <p class="footer-copyright">© 2025 Ishume Productora. Todos los derechos reservados.</p>
         </div>
     </footer>
+        <!-- Chat -->
+       <div class="chat-container">
+        <div class="chat-popup">
+            <div class="chat-header">
+                <h3><i class="fas fa-comments"></i> Chat con Ishume</h3>
+                <span class="close-chat"><i class="fas fa-times"></i></span>
+            </div>
+            <div class="chat-body">
+                <div class="chat-message message-received">
+                    ¡Hola! Soy el asistente virtual de Ishume Productora. ¿En qué puedo ayudarte hoy?
+                    <div class="chat-timestamp">Ahora</div>
+                </div>
+                <!-- Los mensajes se agregarán dinámicamente aquí -->
+            </div>
+            <div class="chat-typing">
+                <span class="typing-indicator">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </span>
+                Escribiendo...
+            </div>
+            <div class="chat-footer">
+                <input type="text" class="chat-input" placeholder="Escribe tu mensaje aquí..." aria-label="Mensaje de chat">
+                <button class="send-button" aria-label="Enviar mensaje">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+        <button class="chat-button" aria-label="Abrir chat">
+            <i class="fas fa-comments"></i>
+        </button>
+    </div>
 <script src="./script.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </body>

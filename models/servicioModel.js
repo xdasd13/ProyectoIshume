@@ -54,10 +54,36 @@ const Servicio = {
     }
   },
 
-  // Actualizar un servicio existente
+  // Actualizar un servicio existente - VERSIÓN CORREGIDA CON MANEJO DE TRANSACCIONES
   update: async (id, servicio) => {
+    const connection = await pool.getConnection();
+    
     try {
-      const [result] = await pool.query(`
+      // Configuramos un timeout más largo para esta transacción
+      await connection.query('SET innodb_lock_wait_timeout = 120');
+      
+      // Comenzamos la transacción
+      await connection.beginTransaction();
+      
+      // Preparamos los parámetros
+      const params = [
+        servicio.nomServicio,
+        servicio.descripcion,
+        servicio.precio,
+        servicio.disponible,
+        servicio.idCategoria
+      ];
+      
+      // Agregamos el parámetro de imagen si existe
+      if (servicio.imgReferencia) {
+        params.push(servicio.imgReferencia);
+      }
+      
+      // Añadimos el ID al final
+      params.push(id);
+      
+      // Ejecutamos la consulta
+      const [result] = await connection.query(`
         UPDATE servicios 
         SET nomServicio = ?, 
             descripcion = ?, 
@@ -66,37 +92,54 @@ const Servicio = {
             idCategoria = ?
             ${servicio.imgReferencia ? ', imgReferencia = ?' : ''}
         WHERE idServicio = ?
-      `, [
-        servicio.nomServicio,
-        servicio.descripcion,
-        servicio.precio,
-        servicio.disponible,
-        servicio.idCategoria,
-        ...(servicio.imgReferencia ? [servicio.imgReferencia] : []),
-        id
-      ]);
+      `, params);
+      
+      // Confirmamos la transacción
+      await connection.commit();
+      
       return result.affectedRows;
     } catch (error) {
+      // Si hay error, hacemos rollback
+      await connection.rollback();
       console.error(`Error al actualizar servicio con ID ${id}:`, error);
+      
+      // Si es error de timeout, proporcionamos un mensaje más específico
+      if (error.code === 'ER_LOCK_WAIT_TIMEOUT') {
+        error.message = 'Tiempo de espera agotado al intentar actualizar. Por favor, inténtelo de nuevo.';
+      }
+      
       throw error;
+    } finally {
+      // Siempre liberamos la conexión
+      connection.release();
     }
   },
 
-  // Eliminar un servicio
+  // Eliminar un servicio - VERSIÓN CORREGIDA CON MANEJO DE TRANSACCIONES
   delete: async (id) => {
+    const connection = await pool.getConnection();
+    
     try {
+      await connection.beginTransaction();
+      
       // Primero eliminamos las referencias en comentarios
-      await pool.query('DELETE FROM comentarios WHERE idServicio = ?', [id]);
+      await connection.query('DELETE FROM comentarios WHERE idServicio = ?', [id]);
       
       // Luego eliminamos las referencias en citas
-      await pool.query('DELETE FROM citas WHERE idServicio = ?', [id]);
+      await connection.query('DELETE FROM citas WHERE idServicio = ?', [id]);
       
       // Finalmente eliminamos el servicio
-      const [result] = await pool.query('DELETE FROM servicios WHERE idServicio = ?', [id]);
+      const [result] = await connection.query('DELETE FROM servicios WHERE idServicio = ?', [id]);
+      
+      await connection.commit();
+      
       return result.affectedRows;
     } catch (error) {
+      await connection.rollback();
       console.error(`Error al eliminar servicio con ID ${id}:`, error);
       throw error;
+    } finally {
+      connection.release();
     }
   },
 

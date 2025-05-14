@@ -272,3 +272,395 @@ collageImages.forEach(image => {
         image.style.filter = 'saturate(0.8) contrast(1.1)';
     });
 });
+
+
+
+
+// Código para la funcionalidad de Text-to-Speech
+document.addEventListener('DOMContentLoaded', function() {
+    // Elementos del DOM
+    const ttsButton = document.getElementById('ttsButton');
+    const ttsVolumeControl = document.getElementById('ttsVolume');
+    const ttsRateControl = document.getElementById('ttsRate');
+    const ttsVoiceSelect = document.getElementById('ttsVoice');
+    const ttsProgressBar = document.getElementById('ttsProgressBar');
+    
+    // Variables de estado
+    let isSpeaking = false;
+    let speechUtterance = null;
+    let currentParagraphIndex = 0;
+    let paragraphs = [];
+    let speechSynth = window.speechSynthesis;
+    
+    // Obtener los textos de la sección "Acerca de nosotros"
+    function collectText() {
+        const aboutSection = document.querySelector('.about-text');
+        const textNodes = aboutSection.querySelectorAll('h2, h3, p');
+        
+        paragraphs = [];
+        textNodes.forEach(node => {
+            if (node.tagName === 'H2' || node.tagName === 'H3' || node.tagName === 'P') {
+                paragraphs.push(node.textContent);
+            }
+        });
+        
+        return paragraphs.join(' ');
+    }
+    
+    // Cargar voces disponibles
+    function loadVoices() {
+        // Limpiar opciones actuales
+        ttsVoiceSelect.innerHTML = '<option value="">Seleccionar voz</option>';
+        
+        // Obtener voces
+        const voices = speechSynth.getVoices();
+        
+        // Filtrar voces en español
+        const spanishVoices = voices.filter(voice => 
+            voice.lang.includes('es') || voice.lang.includes('spa'));
+        
+        // Si no hay voces en español, usar todas las voces
+        const voicesToUse = spanishVoices.length > 0 ? spanishVoices : voices;
+        
+        // Añadir voces al selector
+        voicesToUse.forEach(voice => {
+            const option = document.createElement('option');
+            option.value = voice.name;
+            option.textContent = `${voice.name} (${voice.lang})`;
+            ttsVoiceSelect.appendChild(option);
+            
+            // Seleccionar automáticamente una voz en español
+            if (voice.lang.includes('es-') || voice.lang.includes('es_')) {
+                ttsVoiceSelect.value = voice.name;
+            }
+        });
+    }
+    
+    // Si las voces ya están cargadas, cargarlas inmediatamente
+    if (speechSynth.getVoices().length > 0) {
+        loadVoices();
+    }
+    
+    // Este evento se dispara cuando las voces están disponibles
+    speechSynth.onvoiceschanged = loadVoices;
+    
+    // Iniciar o pausar la lectura
+    function toggleSpeech() {
+        if (isSpeaking) {
+            pauseSpeech();
+        } else {
+            playSpeech();
+        }
+    }
+    
+    // Iniciar la lectura
+    function playSpeech() {
+        // Si estaba pausado, reanudar
+        if (speechUtterance && speechSynth.paused) {
+            speechSynth.resume();
+            isSpeaking = true;
+            ttsButton.classList.add('speaking');
+            return;
+        }
+        
+        // Detener cualquier lectura previa
+        speechSynth.cancel();
+        
+        // Crear nueva utterance
+        const text = collectText();
+        speechUtterance = new SpeechSynthesisUtterance(text);
+        
+        // Configurar parámetros
+        speechUtterance.volume = parseFloat(ttsVolumeControl.value);
+        speechUtterance.rate = parseFloat(ttsRateControl.value);
+        
+        // Seleccionar voz
+        if (ttsVoiceSelect.value) {
+            const voices = speechSynth.getVoices();
+            const selectedVoice = voices.find(voice => voice.name === ttsVoiceSelect.value);
+            if (selectedVoice) {
+                speechUtterance.voice = selectedVoice;
+            }
+        }
+        
+        // Manejadores de eventos
+        speechUtterance.onstart = () => {
+            isSpeaking = true;
+            ttsButton.classList.add('speaking');
+        };
+        
+        speechUtterance.onend = () => {
+            isSpeaking = false;
+            ttsButton.classList.remove('speaking');
+            ttsProgressBar.style.width = '0%';
+        };
+        
+        speechUtterance.onpause = () => {
+            isSpeaking = false;
+            ttsButton.classList.remove('speaking');
+        };
+        
+        speechUtterance.onresume = () => {
+            isSpeaking = true;
+            ttsButton.classList.add('speaking');
+        };
+        
+        // Actualizar barra de progreso
+        let lastCharIndex = 0;
+        speechUtterance.onboundary = (event) => {
+            if (event.name === 'word') {
+                const progress = (event.charIndex / text.length) * 100;
+                ttsProgressBar.style.width = `${progress}%`;
+                lastCharIndex = event.charIndex;
+            }
+        };
+        
+        // Iniciar lectura
+        speechSynth.speak(speechUtterance);
+    }
+    
+    // Pausar la lectura
+    function pauseSpeech() {
+        if (speechSynth.speaking && !speechSynth.paused) {
+            speechSynth.pause();
+            isSpeaking = false;
+            ttsButton.classList.remove('speaking');
+        }
+    }
+    
+    // Event listeners
+    ttsButton.addEventListener('click', toggleSpeech);
+    
+    ttsVolumeControl.addEventListener('input', function() {
+        if (speechUtterance) {
+            speechUtterance.volume = parseFloat(this.value);
+        }
+    });
+    
+    ttsRateControl.addEventListener('input', function() {
+        if (speechUtterance) {
+            speechUtterance.rate = parseFloat(this.value);
+        }
+    });
+    
+    ttsVoiceSelect.addEventListener('change', function() {
+        // Si está leyendo, reiniciar con la nueva voz
+        if (isSpeaking) {
+            pauseSpeech();
+            playSpeech();
+        }
+    });
+    
+    // Limpiar cuando el usuario abandona la página
+    window.addEventListener('beforeunload', function() {
+        if (speechSynth.speaking) {
+            speechSynth.cancel();
+        }
+    });
+});
+
+  // Script para el Chatbox
+        document.addEventListener('DOMContentLoaded', function() {
+            const chatButton = document.querySelector('.chat-button');
+            const chatPopup = document.querySelector('.chat-popup');
+            const closeChat = document.querySelector('.close-chat');
+            const chatInput = document.querySelector('.chat-input');
+            const sendButton = document.querySelector('.send-button');
+            const chatBody = document.querySelector('.chat-body');
+            const chatTyping = document.querySelector('.chat-typing');
+            
+            // Respuestas predefinidas
+            const predefinedResponses = {
+                'hola': '¡Hola! ¿Cómo puedo ayudarte con tus necesidades de fotografía o video?',
+                'precio': 'Nuestros precios varían según el tipo de evento y los servicios requeridos. ¿Te gustaría cotizar un paquete personalizado? Podemos contactarte para discutir detalles.',
+                'servicios': 'Ofrecemos servicios de fotografía y video para bodas, quinceañeras, graduaciones, cumpleaños y eventos corporativos. ¿Hay algún servicio específico que te interese?',
+                'ubicación': 'Estamos ubicados en Av. Luis Massaro 791, Chincha Alta, Perú. Puedes encontrarnos fácilmente en el mapa o contactarnos para más indicaciones.',
+                'horario': 'Nuestro horario de atención es de lunes a viernes de 9:00 AM a 6:00 PM y sábados de 10:00 AM a 2:00 PM.',
+                'contacto': 'Puedes contactarnos al teléfono 991 157 028 o enviarnos un email a contacto@ishumeproductora.com',
+                'boda': 'Para bodas ofrecemos paquetes que incluyen fotografía, video, álbum digital, sesión pre-boda y cobertura completa del evento. ¿Te gustaría solicitar una cotización?',
+                'quinceañera': 'Nuestros paquetes para quinceañeras incluyen fotografía profesional, video, sesión temática y cobertura del evento. Podemos personalizar un paquete según tus necesidades.',
+                'graduación': 'Tenemos opciones especiales para graduaciones que incluyen fotos individuales, grupales y cobertura del evento. ¿Es para una graduación escolar o universitaria?',
+                'equipo': 'Contamos con un equipo de fotógrafos y videógrafos profesionales con amplia experiencia en eventos sociales y producción visual.',
+                'portafolio': 'Puedes ver más de nuestro trabajo en la sección de Galería de nuestra página o en nuestras redes sociales. ¿Te gustaría que te comparta algún trabajo específico?',
+                'reserva': 'Para reservar nuestros servicios solicitamos un anticipo del 30% del total del paquete elegido. ¿Te gustaría que te contactemos para realizar una reserva?'
+            };
+            
+            // Función para abrir el chat
+            chatButton.addEventListener('click', function() {
+                chatPopup.classList.add('active');
+                setTimeout(() => {
+                    chatInput.focus();
+                }, 300);
+            });
+            
+            // Función para cerrar el chat
+            closeChat.addEventListener('click', function() {
+                chatPopup.classList.remove('active');
+            });
+            
+            // Función para enviar mensaje
+            function sendMessage() {
+                const message = chatInput.value.trim();
+                if (message !== '') {
+                    // Agregar mensaje del usuario
+                    addMessage(message, 'sent');
+                    
+                    // Limpiar input
+                    chatInput.value = '';
+                    
+                    // Mostrar indicador de escritura
+                    showTypingIndicator();
+                    
+                    // Simular respuesta después de un breve retraso
+                    setTimeout(() => {
+                        // Ocultar indicador de escritura
+                        hideTypingIndicator();
+                        
+                        // Procesar respuesta
+                        const response = getResponse(message);
+                        addMessage(response, 'received');
+                        
+                        // Scroll al último mensaje
+                        scrollToBottom();
+                    }, 1500);
+                }
+            }
+            
+            // Enviar mensaje con botón
+            sendButton.addEventListener('click', sendMessage);
+            
+            // Enviar mensaje con tecla Enter
+            chatInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+            
+            // Habilitar/deshabilitar botón de envío según el contenido del input
+            chatInput.addEventListener('input', function() {
+                sendButton.disabled = chatInput.value.trim() === '';
+            });
+            
+            // Función para agregar mensaje al chat
+            function addMessage(text, type) {
+                const messageDiv = document.createElement('div');
+                messageDiv.classList.add('chat-message', `message-${type}`);
+                
+                // Contenido del mensaje
+                messageDiv.textContent = text;
+                
+                // Agregar marca de tiempo
+                const timestamp = document.createElement('div');
+                timestamp.classList.add('chat-timestamp');
+                timestamp.textContent = getCurrentTime();
+                messageDiv.appendChild(timestamp);
+                
+                // Agregar al chat
+                chatBody.appendChild(messageDiv);
+                
+                // Scroll al último mensaje
+                scrollToBottom();
+            }
+            
+            // Función para obtener la hora actual formateada
+            function getCurrentTime() {
+                const now = new Date();
+                let hours = now.getHours();
+                let minutes = now.getMinutes();
+                const ampm = hours >= 12 ? 'PM' : 'AM';
+                
+                hours = hours % 12;
+                hours = hours ? hours : 12;
+                minutes = minutes < 10 ? '0' + minutes : minutes;
+                
+                return `${hours}:${minutes} ${ampm}`;
+            }
+            
+            // Función para mostrar indicador de escritura
+            function showTypingIndicator() {
+                chatTyping.style.display = 'block';
+                scrollToBottom();
+            }
+            
+            // Función para ocultar indicador de escritura
+            function hideTypingIndicator() {
+                chatTyping.style.display = 'none';
+            }
+            
+            // Función para hacer scroll al último mensaje
+            function scrollToBottom() {
+                chatBody.scrollTop = chatBody.scrollHeight;
+            }
+            
+            // Función para obtener respuesta según el mensaje
+            function getResponse(message) {
+                message = message.toLowerCase();
+                
+                // Buscar coincidencias en respuestas predefinidas
+                for (const keyword in predefinedResponses) {
+                    if (message.includes(keyword)) {
+                        return predefinedResponses[keyword];
+                    }
+                }
+                
+                // Si no hay coincidencias específicas
+                if (message.includes('gracias')) {
+                    return '¡De nada! Estamos para ayudarte. ¿Hay algo más en lo que pueda asistirte?';
+                } else if (message.includes('costo') || message.includes('valor') || message.includes('presupuesto')) {
+                    return 'Los costos de nuestros servicios dependen del tipo de evento, duración y servicios específicos. ¿Te gustaría una cotización personalizada?';
+                } else if (message.includes('descuento') || message.includes('promoción') || message.includes('oferta')) {
+                    return 'Ocasionalmente ofrecemos promociones especiales. Te recomendaría suscribirte a nuestro boletín o seguirnos en redes sociales para estar al tanto de las mismas.';
+                } else if (message.includes('cámara') || message.includes('equipo') || message.includes('tecnología')) {
+                    return 'Utilizamos equipos profesionales de última generación que incluyen cámaras DSLR y sin espejo, drones, estabilizadores, iluminación profesional y software de edición avanzado.';
+                } else if (message.includes('reserva') || message.includes('fecha') || message.includes('disponibilidad')) {
+                    return 'Para verificar disponibilidad y realizar una reserva, necesitaríamos la fecha exacta de tu evento. ¿Te gustaría proporcionarnos más detalles?';
+                }
+                
+                // Respuesta genérica si no se encuentra coincidencia
+                return 'Gracias por tu mensaje. Para darte información más precisa, ¿podrías proporcionar más detalles sobre lo que estás buscando? También puedes contactarnos directamente al 991 157 028.';
+            }
+            
+            // Inicializar estado del botón de envío
+            sendButton.disabled = true;
+            
+            // Mostrar indicador de escritura inicial y luego ocultarlo
+            showTypingIndicator();
+            setTimeout(hideTypingIndicator, 1500);
+            
+            // Añadir notificación de nuevos mensajes
+            let chatNotificationTimeout;
+            
+            function showChatNotification() {
+                if (!chatPopup.classList.contains('active')) {
+                    chatButton.classList.add('notification');
+                    
+                    // Eliminar la notificación después de un tiempo
+                    clearTimeout(chatNotificationTimeout);
+                    chatNotificationTimeout = setTimeout(() => {
+                        chatButton.classList.remove('notification');
+                    }, 3000);
+                }
+            }
+            
+            // Simular un mensaje de seguimiento después de un tiempo
+            setTimeout(() => {
+                if (!chatPopup.classList.contains('active')) {
+                    showChatNotification();
+                    
+                    // Cuando se abra el chat después de la notificación
+                    chatButton.addEventListener('click', function respondToNotification() {
+                        // Eliminar este listener específico después de usarlo una vez
+                        chatButton.removeEventListener('click', respondToNotification);
+                        
+                        // Mostrar mensaje de seguimiento después de abrir
+                        setTimeout(() => {
+                            showTypingIndicator();
+                            setTimeout(() => {
+                                hideTypingIndicator();
+                                addMessage('¿Estás interesado en alguno de nuestros servicios para un evento próximo? Estaré encantado de ayudarte.', 'received');
+                            }, 1500);
+                        }, 1000);
+                    }, { once: true });
+                }
+            }, 20000); // Mostrar después de 20 segundos de inactividad
+        });
